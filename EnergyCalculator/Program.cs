@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EnergyCalculator.Configuration;
+using EnergyCalculator.Services;
+using EnergyCalculator.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -35,6 +38,11 @@ namespace EnergyCalculator
         {
             host.ConfigureServices((context, services) =>
             {
+                services.Configure<FileObserverSettings>(context.Configuration.GetSection(nameof(FileObserverSettings)));
+
+                services.AddSingleton<IFileObserverService, FileObserverService>();
+                services.AddSingleton<IDirectoryService, DirectoryService>();
+
                 services.AddSingleton<Application>();
             });
         }

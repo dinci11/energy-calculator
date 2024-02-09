@@ -1,20 +1,31 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using EnergyCalculator.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EnergyCalculator
 {
     public class Application
     {
         private readonly ILogger<Application> _logger;
+        private readonly IFileObserverService _fileObserverService;
 
-        public Application(ILogger<Application> logger)
+        public Application(ILogger<Application> logger, IFileObserverService fileObserverService)
         {
             _logger = logger;
+            _fileObserverService = fileObserverService;
         }
 
         public async Task RunAsync()
         {
             _logger.LogInformation("Application started...");
-            await Task.Delay(1000);
+            await _fileObserverService.ObservInputFolderAsync();
+            _logger.LogInformation("Press Escape to exit");
+
+            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            {
+                _logger.LogInformation("Press Escape to exit");
+                await Task.Delay(500);
+            }
+
             _logger.LogInformation("Application shutting down...");
         }
     }
