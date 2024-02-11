@@ -1,4 +1,5 @@
 ﻿using EnergyCalculator.Configuration;
+using EnergyCalculator.Extensions;
 using EnergyCalculator.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,20 +9,23 @@ namespace EnergyCalculator.Services
     public class FileObserverService : IFileObserverService
     {
         private readonly ILogger<FileObserverService> _logger;
-        private readonly FileObserverSettings _settings;
+        private readonly EnergyCalculatorSettings _settings;
         private readonly IDirectoryService _directoryService;
-        private readonly IFileProcessorService _fileProcessorService;
+        private readonly IXmlProcessingService _fileProcessorService;
+        private readonly IFileService _fileService;
         private readonly FileSystemWatcher _fileSystemWatcher;
 
         public FileObserverService(ILogger<FileObserverService> logger,
-            IOptions<FileObserverSettings> options,
+            IOptions<EnergyCalculatorSettings> options,
             IDirectoryService directoryService,
-            IFileProcessorService fileProcessorService)
+            IXmlProcessingService fileProcessorService,
+            IFileService fileService)
         {
             _logger = logger;
             _settings = options.Value;
             _directoryService = directoryService;
             _fileProcessorService = fileProcessorService;
+            _fileService = fileService;
 
             _fileSystemWatcher = new FileSystemWatcher();
         }
@@ -48,16 +52,45 @@ namespace EnergyCalculator.Services
 
         private async Task ProcessNewFileAsync(object sender, FileSystemEventArgs e)
         {
-            _logger.LogInformation($"Start processing file: {e.FullPath}");
-            var result = await _fileProcessorService.ProcessFileAsync(e.FullPath);
-
-            if (!result.IsSuccess)
+            var file = new FileInfo(e.FullPath);
+            try
             {
-                _logger.LogError($"Processing {e.FullPath} failed");
-                return;
-            }
+                if (!file.IsXml())
+                {
+                    throw new FormatException("Input file should be an XML");
+                }
 
-            _logger.LogInformation($"File {e.FullPath} processed result saved to {result.ResultFile?.FullName ?? "N/A"}");
+                _logger.LogInformation($"Start processing file: {file.FullName}");
+
+                var resultXml = ProcessFile(file);
+
+                var outputFile = GetOutputFile(file);
+
+                await _fileService.WriteToFileAsync(await resultXml, outputFile);
+
+                _logger.LogInformation($"File {e.FullPath} processed successfully, saving to {outputFile.FullName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong during processing {file.FullName}");
+                _logger.LogError(ex.ToString());
+            }
+        }
+
+        private FileInfo GetOutputFile(FileInfo file)
+        {
+            var outputDirectory = _directoryService.GetOrCreateDirectory(_settings.OutputDirectoryPath);
+
+            var outputFile = file.AddPrefix("-Result").ChangeDirectory(outputDirectory.FullName);
+            return outputFile;
+        }
+
+        private async Task<string> ProcessFile(FileInfo file)
+        {
+            using (var xml = _fileService.LoadFile(file))
+            {
+                return await _fileProcessorService.ProcessXmlAsync(xml);
+            }
         }
     }
 }

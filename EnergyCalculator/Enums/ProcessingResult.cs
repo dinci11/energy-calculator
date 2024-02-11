@@ -1,6 +1,6 @@
 ﻿namespace EnergyCalculator.Enums
 {
-    public enum ProcessingResutl
+    public enum ProcessingResult
     {
         Success,
         Faild

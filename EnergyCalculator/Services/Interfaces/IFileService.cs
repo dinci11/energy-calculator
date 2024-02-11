@@ -2,6 +2,8 @@
 {
     public interface IFileService
     {
-        FileStream LoadFile(string filePath);
+        FileStream LoadFile(FileInfo file);
+
+        Task WriteToFileAsync(string result, FileInfo outputFile);
     }
 }

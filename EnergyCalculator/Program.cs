@@ -38,14 +38,15 @@ namespace EnergyCalculator
         {
             host.ConfigureServices((context, services) =>
             {
-                services.Configure<FileObserverSettings>(context.Configuration.GetSection(nameof(FileObserverSettings)));
+                services.Configure<EnergyCalculatorSettings>(context.Configuration.GetSection(nameof(EnergyCalculatorSettings)));
 
                 services.AddTransient<IFileService, FileService>();
                 services.AddTransient<IXmlService, XmlService>();
-                services.AddTransient<IFileProcessorService, FileProcessorService>();
+                services.AddTransient<IXmlProcessingService, XmlProcessingService>();
+                services.AddTransient<IDirectoryService, DirectoryService>();
+                services.AddTransient<IReportProcessingService, ReportProcessingService>();
 
                 services.AddSingleton<IFileObserverService, FileObserverService>();
-                services.AddSingleton<IDirectoryService, DirectoryService>();
 
                 services.AddSingleton<Application>();
             });
