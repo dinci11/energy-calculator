@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using EnergyCalculator.Model.Generators;
 
 namespace EnergyCalculator.Model
@@ -7,9 +6,16 @@ namespace EnergyCalculator.Model
     [XmlRoot(nameof(GenerationReport))]
     public class GenerationReport
     {
-        [XmlElement(typeof(WindGenerator), ElementName = "Wind")]
-        [XmlElement(typeof(GasGenerator), ElementName = "Gas")]
-        [XmlElement(typeof(CoalGenerator), ElementName = "Coal")]
-        public List<GeneratorBase> Generators { get; set; }
+        [XmlArray("Wind")]
+        [XmlArrayItem(nameof(WindGenerator))]
+        public List<WindGenerator> WindGenerators { get; set; }
+
+        [XmlArray("Gas")]
+        [XmlArrayItem(nameof(GasGenerator))]
+        public List<GasGenerator> GasGenerators { get; set; }
+
+        [XmlArray("Coal")]
+        [XmlArrayItem(nameof(CoalGenerator))]
+        public List<CoalGenerator> CoalsGenerators { get; set; }
     }
 }

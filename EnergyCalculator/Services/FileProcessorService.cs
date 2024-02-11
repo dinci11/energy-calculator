@@ -30,8 +30,9 @@ namespace EnergyCalculator.Services
                     throw new Exception();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex.StackTrace);
                 return Task.FromResult(new FileProcessingResult(Enums.ProcessingResutl.Faild));
             }
         }
