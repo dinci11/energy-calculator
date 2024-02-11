@@ -10,17 +10,23 @@ namespace EnergyCalculator.Services
         private readonly ILogger<FileObserverService> _logger;
         private readonly FileObserverSettings _settings;
         private readonly IDirectoryService _directoryService;
+        private readonly IFileProcessorService _fileProcessorService;
+        private readonly FileSystemWatcher _fileSystemWatcher;
 
         public FileObserverService(ILogger<FileObserverService> logger,
             IOptions<FileObserverSettings> options,
-            IDirectoryService directoryService)
+            IDirectoryService directoryService,
+            IFileProcessorService fileProcessorService)
         {
             _logger = logger;
             _settings = options.Value;
             _directoryService = directoryService;
+            _fileProcessorService = fileProcessorService;
+
+            _fileSystemWatcher = new FileSystemWatcher();
         }
 
-        public async Task ObservInputFolderAsync()
+        public void StartObservingInputFolderAsync()
         {
             _logger.LogInformation("Start observing...");
 
@@ -28,21 +34,30 @@ namespace EnergyCalculator.Services
 
             _logger.LogInformation($"Input directory: {inputDirectory.FullName}");
 
-            var watcher = new FileSystemWatcher(inputDirectory.FullName);
-            watcher.Created += async (s, e) => await ProcessNewFileAsync(s, e);
+            StartMonitoring(inputDirectory);
+        }
 
-            watcher.EnableRaisingEvents = true;
+        private void StartMonitoring(DirectoryInfo inputDirectory)
+        {
+            _fileSystemWatcher.Path = inputDirectory.FullName;
+
+            _fileSystemWatcher.Created += async (sender, e) => await ProcessNewFileAsync(sender, e);
+
+            _fileSystemWatcher.EnableRaisingEvents = true;
         }
 
         private async Task ProcessNewFileAsync(object sender, FileSystemEventArgs e)
         {
-            if (!File.Exists(e.FullPath))
+            _logger.LogInformation($"Start processing file: {e.FullPath}");
+            var result = await _fileProcessorService.ProcessFileAsync(e.FullPath);
+
+            if (!result.IsSuccess)
             {
-                throw new FileNotFoundException(e.FullPath);
+                _logger.LogError($"Processing {e.FullPath} failed");
+                return;
             }
 
-            _logger.LogInformation($"Start processing file: {e.FullPath}");
-            await Task.Delay(1000);
+            _logger.LogInformation($"File {e.FullPath} processed result saved to {result.ResultFile?.FullName ?? "N/A"}");
         }
     }
 }

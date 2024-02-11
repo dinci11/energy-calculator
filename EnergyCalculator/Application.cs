@@ -17,7 +17,7 @@ namespace EnergyCalculator
         public async Task RunAsync()
         {
             _logger.LogInformation("Application started...");
-            await _fileObserverService.ObservInputFolderAsync();
+            _fileObserverService.StartObservingInputFolderAsync();
             _logger.LogInformation("Press Escape to exit");
 
             while (Console.ReadKey().Key != ConsoleKey.Escape)

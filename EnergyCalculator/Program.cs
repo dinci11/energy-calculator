@@ -40,6 +40,10 @@ namespace EnergyCalculator
             {
                 services.Configure<FileObserverSettings>(context.Configuration.GetSection(nameof(FileObserverSettings)));
 
+                services.AddTransient<IFileService, FileService>();
+                services.AddTransient<IXmlService, XmlService>();
+                services.AddTransient<IFileProcessorService, FileProcessorService>();
+
                 services.AddSingleton<IFileObserverService, FileObserverService>();
                 services.AddSingleton<IDirectoryService, DirectoryService>();
 

@@ -2,6 +2,6 @@
 {
     public interface IFileObserverService
     {
-        Task ObservInputFolderAsync();
+        void StartObservingInputFolderAsync();
     }
 }
