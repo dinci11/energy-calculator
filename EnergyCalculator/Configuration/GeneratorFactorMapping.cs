@@ -13,7 +13,7 @@ namespace EnergyCalculator.Configuration
             _emissionMapping = new Dictionary<Type, double>()
             {
                 {typeof(GasGenerator), _referenceData.EmissionsFactor.Medium },
-                {typeof(CoalGenerator), referenceData.EmissionsFactor.Medium },
+                {typeof(CoalGenerator), referenceData.EmissionsFactor.High },
                 { typeof(WindGenerator), 1.0 }
             };
         }

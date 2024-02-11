@@ -3,25 +3,19 @@ using EnergyCalculator.Model.Generators;
 
 namespace EnergyCalculator.Model.Output
 {
+    [XmlRoot("Generator")]
     public class TotalGeneration
     {
-        private GeneratorBase Generator { get; set; }
-
-        private readonly double ValueFactor;
-
-        private readonly double EmissionFactor;
-
         [XmlElement(nameof(Name))]
-        public string Name => Generator.Name;
+        public string Name;
 
         [XmlElement("Total")]
-        public double TotalValue => Generator.TotalValue * ValueFactor;
+        public double TotalValue;
 
-        public TotalGeneration(GeneratorBase generator, double valueFactor, double emissionFactor)
+        public TotalGeneration(GeneratorBase generator, double valueFactor)
         {
-            Generator = generator;
-            ValueFactor = valueFactor;
-            EmissionFactor = emissionFactor;
+            Name = generator.Name;
+            TotalValue = generator.TotalValue * valueFactor;
         }
 
         private TotalGeneration()
