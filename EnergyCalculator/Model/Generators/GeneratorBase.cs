@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using EnergyCalculator.Model.Report;
 
 namespace EnergyCalculator.Model.Generators
 {

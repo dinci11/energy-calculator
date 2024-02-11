@@ -1,4 +1,5 @@
 ﻿using EnergyCalculator.Model;
+using EnergyCalculator.Model.Report;
 using EnergyCalculator.Services.Interfaces;
 
 namespace EnergyCalculator.Services

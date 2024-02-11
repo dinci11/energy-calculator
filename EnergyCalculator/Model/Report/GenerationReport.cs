@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using EnergyCalculator.Model.Generators;
 
-namespace EnergyCalculator.Model
+namespace EnergyCalculator.Model.Report
 {
     [XmlRoot(nameof(GenerationReport))]
     public class GenerationReport

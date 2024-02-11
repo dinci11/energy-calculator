@@ -1,4 +1,4 @@
-﻿namespace EnergyCalculator.Model
+﻿namespace EnergyCalculator.Model.Report
 {
     public class Generation
     {

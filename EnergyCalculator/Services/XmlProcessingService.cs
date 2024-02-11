@@ -1,4 +1,4 @@
-﻿using EnergyCalculator.Model;
+﻿using EnergyCalculator.Model.Report;
 using EnergyCalculator.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
