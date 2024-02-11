@@ -16,17 +16,30 @@ namespace EnergyCalculator
 
         public async Task RunAsync()
         {
-            _logger.LogInformation("Application started...");
-            _fileObserverService.StartObservingInputFolderAsync();
-            _logger.LogInformation("Press Escape to exit");
-
-            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            try
             {
-                _logger.LogInformation("Press Escape to exit");
-                await Task.Delay(500);
-            }
+                _logger.LogInformation("Application started");
+                _fileObserverService.StartObserving();
+                _logger.LogInformation("Observation strated");
 
-            _logger.LogInformation("Application shutting down...");
+                _logger.LogInformation("Press Escape to exit");
+
+                while (Console.ReadKey().Key != ConsoleKey.Escape)
+                {
+                    _logger.LogInformation("Press Escape to exit");
+                    await Task.Delay(500);
+                }
+
+                _fileObserverService.StopObserving();
+
+                _logger.LogInformation("Application shutting down");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Unhandled exception thrown: {ex}");
+                _fileObserverService.StopObserving();
+                _logger.LogError($"Observation stopped");
+            }
         }
     }
 }

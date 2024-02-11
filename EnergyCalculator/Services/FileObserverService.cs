@@ -30,7 +30,7 @@ namespace EnergyCalculator.Services
             _fileSystemWatcher = new FileSystemWatcher();
         }
 
-        public void StartObservingInputFolderAsync()
+        public void StartObserving()
         {
             _logger.LogInformation("Start observing...");
 
@@ -91,6 +91,11 @@ namespace EnergyCalculator.Services
             {
                 return await _fileProcessorService.ProcessXmlAsync(xml);
             }
+        }
+
+        public void StopObserving()
+        {
+            _fileSystemWatcher.EnableRaisingEvents = false;
         }
     }
 }
