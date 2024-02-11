@@ -1,4 +1,5 @@
 ﻿using EnergyCalculator.Configuration;
+using EnergyCalculator.Extensions;
 using EnergyCalculator.Services;
 using EnergyCalculator.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,8 @@ namespace EnergyCalculator
                 services.AddTransient<IReportProcessingService, ReportProcessingService>();
 
                 services.AddSingleton<IFileObserverService, FileObserverService>();
+                services.ConfigureReferenceData("../../../../ReferenceData.xml");
+                services.AddSingleton<GeneratorFactorMapping>();
 
                 services.AddSingleton<Application>();
             });

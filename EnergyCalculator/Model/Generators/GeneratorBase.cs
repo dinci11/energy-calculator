@@ -11,5 +11,7 @@ namespace EnergyCalculator.Model.Generators
         [XmlArray(nameof(Generation))]
         [XmlArrayItem("Day")]
         public List<Generation> Generations { get; set; }
+
+        public double TotalValue => Generations.Sum(g => g.Energy * g.Price);
     }
 }
